@@ -1,0 +1,21 @@
+var api_token = '【api_token】';
+var myAccountId = '【myAccountId】';
+
+function sendToChatwork(roomId, body) {
+  var cw = ChatWorkClient.factory({token: api_token});
+  cw.sendMessage({room_id: roomId, body: body});
+}
+
+function doPost(e) {
+  var json = JSON.parse(e.postData.contents);
+  var accountId = json.webhook_event.account_id;
+  if (accountId == myAccountId) {
+    return;
+  }
+  
+  var roomId = json.webhook_event.room_id;
+  var message = json.webhook_event.body;
+  var translation = LanguageApp.translate(message, '', 'ja')
+  
+  sendToChatwork(roomId, translation);
+}
